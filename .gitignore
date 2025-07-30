@@ -1,0 +1,41 @@
+# 가상환경 폴더
+venv/
+ENV/
+env/
+.venv/
+
+# Python 컴파일 파일
+__pycache__/
+*.py[cod]
+
+# IDE 설정 파일 및 임시 폴더
+.vscode/
+.idea/
+*.sublime-workspace
+
+# OS 임시 파일
+.DS_Store
+Thumbs.db
+
+# 환경 변수 등 민감 정보
+.env
+.env.*
+
+# 로그/DB/캐시/테스트 파일
+*.log
+*.sqlite3
+*.db
+*.pkl
+*.tmp
+
+# Alembic 마이그레이션 캐시
+migrations/__pycache__/
+migrations/*.pyc
+
+# Jupyter 등 기타
+*.ipynb_checkpoints
+
+# 파이썬 패키지 설치 결과
+*.egg-info/
+dist/
+build/
