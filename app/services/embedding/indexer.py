@@ -8,7 +8,9 @@ def build_index(documents: List[Dict], out_dir="data/faiss", model_name="all-Min
     model = SentenceTransformer(model_name)
     embeddings = model.encode(texts)
     index = faiss.IndexFlatL2(embeddings.shape[1])
-    index.add(np.array(embeddings))
+    index.add(np.array(embeddings, dtype="float32"))
+    artifact_ids = [d["id"] for d in documents]
+
     faiss.write_index(index, os.path.join(out_dir, "faiss_index.idx"))
     with open(os.path.join(out_dir, "documents.pkl"), "wb") as f:
         pickle.dump(documents, f)
