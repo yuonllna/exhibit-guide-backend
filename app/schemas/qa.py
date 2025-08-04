@@ -5,6 +5,4 @@ class Question(BaseModel):
 
 class Answer(BaseModel):
     question: str
-    matched_text: str
-    artwork_id: str
     gemini_answer: str

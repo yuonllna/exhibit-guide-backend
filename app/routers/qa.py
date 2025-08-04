@@ -19,7 +19,7 @@ def get_llm(request: Request) -> GeminiClient:
 
 @router.post("/artifacts/{artifact_id}/questions", response_model=Answer)
 def ask_question(
-    artifact_id: str,
+    #artifact_id: str,
     q: Question,
     encoder: SentenceTransformer = Depends(get_encoder),
     idx_docs = Depends(get_index_docs),
@@ -27,24 +27,39 @@ def ask_question(
 ):
     index, documents = idx_docs
 
-    # 1) 쿼리 임베딩
+    # 1) 질문 임베딩
     q_vec = encoder.encode([q.question]).astype("float32")
 
-    # 2) 전체 검색 후 해당 작품만 필터
-    D, I = search(index, q_vec, k=50)  # 넉넉히 뽑기
-    cand_indices = [i for i in I[0] if documents[i]["id"] == artifact_id]
-    if not cand_indices:
-        raise HTTPException(status_code=404, detail="No relevant passages for this artifact.")
+    # 2) 상위 k개 문서 검색
+    k = 3
+    D, I = search(index, q_vec, k=k)
 
-    top_idx = cand_indices[0]
-    doc = documents[top_idx]
+    # 3) 유사도 필터링 
+    threshold = 0.4
+    filtered_docs = [
+        (documents[i], D[0][rank])
+        for rank, i in enumerate(I[0])
+        if D[0][rank] < threshold
+    ]
 
-    # 3) LLM 호출
-    answer_text = llm.answer(doc["text"], q.question)
+    if not filtered_docs:
+        raise HTTPException(status_code=404, detail="No sufficiently relevant passages.")
+
+    # 4) 최대 3개만 선택
+    top_docs = [doc for doc, _ in filtered_docs[:3]]
+
+    # 5) 텍스트 합치기
+    combined_text = "\n\n".join([f"- {doc['text']}" for doc in top_docs])
+
+    # 6) Gemini 호출
+    answer_text = llm.answer(combined_text, q.question)
+
+    print("\n[🔍 Gemini RAG 검색 결과]")
+    for i, doc in enumerate(top_docs):
+        print(f"[{i+1}] ID: {doc['id']}")
+        print(f"Text: {doc['text']}\n")
 
     return Answer(
         question=q.question,
-        matched_text=doc["text"],
-        artwork_id=doc["id"],
         gemini_answer=answer_text,
     )
