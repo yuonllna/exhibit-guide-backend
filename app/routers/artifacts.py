@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, Path
 from typing import List, Optional
 from pydantic import BaseModel
-from models import Artifact, ArtifactExplanation  # 실제 ORM 모델 import
+from app.models import Artifact, ArtifactExplanation  # 실제 ORM 모델 import
 
 router = APIRouter()
 

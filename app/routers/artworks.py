@@ -2,7 +2,7 @@ from fastapi import APIRouter, Path, Body, status
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
-from utils.qr import generate_qr_code
+from app.utils.qr import generate_qr_code
 
 router = APIRouter()
 

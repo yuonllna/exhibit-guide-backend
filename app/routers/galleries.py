@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query
 from typing import List
 from pydantic import BaseModel
-from models import Gallery  
+from app.models import Gallery  
 router = APIRouter()
 
 class GalleryResponse(BaseModel):
