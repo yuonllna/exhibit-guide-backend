@@ -1,22 +1,22 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Path, HTTPException, Depends
 from typing import List
-from pydantic import BaseModel
-from app.models import Gallery  
+from pydantic import BaseModel, Field
+from app.models import Gallery
+from app.database import get_db
+from sqlalchemy.orm import Session
+
 router = APIRouter()
 
 class GalleryResponse(BaseModel):
+    id: int = Field(..., alias="gallery_id")
     name: str
     description: str
     image_url: str
 
-@router.get("/api/galleries", response_model=List[GalleryResponse])
-async def get_galleries(exhibition_id: int = Query(...)):
-    galleries = await Gallery.filter(exhibition_id=exhibition_id).all()
-    return [
-        GalleryResponse(
-            name=g.name,
-            description=g.description,
-            image_url=g.image_url
-        )
-        for g in galleries
-    ]
+@router.get("/api/exhibitions/{exhibition_id}/galleries", response_model=List[GalleryResponse])
+def get_galleries(
+    exhibition_id: int = Path(..., description="전시 ID"),
+    db: Session = Depends(get_db)
+):
+    galleries = db.query(Gallery).filter(Gallery.exhibition_id == exhibition_id).all()
+    return galleries

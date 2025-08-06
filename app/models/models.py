@@ -45,7 +45,7 @@ class ArtifactExplanation(Base):
     explanation_id = Column(Integer, primary_key=True, index=True)
     artifact_id = Column(Integer, ForeignKey('artifact.artifact_id', ondelete='CASCADE'), nullable=False)
     explanation_text = Column(Text)
-    explanation_audio_url = Column(String(255))
+    explanation_audio_key = Column(String(255))
 
     artifact = relationship('Artifact', back_populates='explanations')
 
