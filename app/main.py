@@ -5,6 +5,7 @@ from app.core.config import settings
 from app.services.embedding.searcher import load_index
 from app.services.llm.gemini_client import GeminiClient
 from app.routers.qa import router as qa_router
+from app.routers.onboarding import router as onboarding_router
 
 app = FastAPI()
 
@@ -28,4 +29,5 @@ def startup():
     app.state.gemini = GeminiClient(api_key=settings.google_api_key)
 
 app.include_router(qa_router, prefix="/api", tags=["qa"])
+app.include_router(onboarding_router, prefix="/api", tags=["onboarding"])
 
