@@ -39,3 +39,9 @@ migrations/*.pyc
 *.egg-info/
 dist/
 build/
+
+#데이터/키
+data/faiss
+gcloud-key.json
+
+
