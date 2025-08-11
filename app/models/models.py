@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, TIMESTAMP
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, TIMESTAMP, Float
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
@@ -30,7 +30,8 @@ class Artifact(Base):
     gallery_id = Column(Integer, ForeignKey('gallery.gallery_id', ondelete='CASCADE'), nullable=False)
     name = Column(String(255), nullable=False)
     description = Column(Text)
-    location = Column(String(255))
+    x_coord = Column(Float)
+    y_coord = Column(Float)
     image_url = Column(String(255))
 
     gallery = relationship('Gallery', back_populates='artifacts')
@@ -45,7 +46,6 @@ class ArtifactExplanation(Base):
     artifact_id = Column(Integer, ForeignKey('artifact.artifact_id', ondelete='CASCADE'), nullable=False)
     explanation_text = Column(Text)
     explanation_audio_url = Column(String(255))
-    language_code = Column(String(10))
 
     artifact = relationship('Artifact', back_populates='explanations')
 
@@ -75,7 +75,6 @@ class Question(Base):
     artifact_id = Column(Integer, ForeignKey('artifact.artifact_id', ondelete='CASCADE'), nullable=False)
     question_text = Column(Text)
     answer_text = Column(Text)
-    language_code = Column(String(10))
     created_at = Column(TIMESTAMP, nullable=False)
 
     artifact = relationship('Artifact', back_populates='questions')
@@ -86,6 +85,5 @@ class FAQ(Base):
     artifact_id = Column(Integer, ForeignKey('artifact.artifact_id', ondelete='CASCADE'), nullable=False)
     question_text = Column(Text)
     answer_text = Column(Text)
-    language_code = Column(String(10))
 
     artifact = relationship('Artifact', back_populates='faqs')
