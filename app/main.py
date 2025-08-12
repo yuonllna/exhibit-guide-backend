@@ -10,7 +10,7 @@ from app.routers.qa import router as qa_router
 from app.routers.onboarding import router as onboarding_router
 
 # --- 도메인 라우터들 ---
-from app.routers import exhibitions, galleries, artifacts, artworks
+from app.routers import exhibitions, galleries, artifacts, artworks, faq
 
 app = FastAPI()
 
@@ -44,4 +44,5 @@ app.include_router(exhibitions.router)
 app.include_router(galleries.router)
 app.include_router(artifacts.router)
 app.include_router(artworks.router)
+app.include_router(faq.router)
 
