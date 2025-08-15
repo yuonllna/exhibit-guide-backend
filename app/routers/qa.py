@@ -3,7 +3,7 @@ from sentence_transformers import SentenceTransformer
 import numpy as np
 
 from app.schemas.qa import Question, Answer
-from app.services.stt.stt import SpeechToTextService
+from app.services.speech.stt import SpeechToTextService
 from app.services.embedding.searcher import search
 from app.services.llm.gemini_client import GeminiClient
 
