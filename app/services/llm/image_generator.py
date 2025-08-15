@@ -11,6 +11,9 @@ class ImageRegenService:
 
     def regenerate_image(self, image_path: str, prompt: str) -> bytes:
         try:
+            if not prompt:
+                prompt = "기존의 작품에 새로운 그림을 추가한 이미지입니다. 이를 그림체를 통일하여 자연스럽게 재생성해주세요."
+
             with open(image_path, "rb") as f:
                 image_bytes = f.read()
             contents = [
