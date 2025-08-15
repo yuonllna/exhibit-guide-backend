@@ -1,20 +1,21 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# --- 임베딩/LLM 준비 ---
+# --- 서비스/모델 준비 ---
 from sentence_transformers import SentenceTransformer
 from app.core.config import settings
 from app.services.embedding.searcher import load_index
 from app.services.llm.gemini_client import GeminiClient
+
+# --- Router Import ---
 from app.routers.qa import router as qa_router
 from app.routers.onboarding import router as onboarding_router
-
-# --- 도메인 라우터들 ---
-from app.routers import exhibitions, galleries, artifacts, artworks
+from app.routers.artwork import router as artwork_router
+from app.routers import exhibitions, galleries, artifacts
 
 app = FastAPI()
 
-# CORS: 설정에서 읽고, 없으면 로컬 리액트만 허용(필요 시 추가)
+# --- CORS 세팅 ---
 allow_origins = getattr(settings, "cors_origins", ["http://localhost:3000"])
 app.add_middleware(
     CORSMiddleware,
@@ -24,24 +25,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# --- 기본 Root API ---
 @app.get("/")
 async def read_root():
     return {"message": "Hello World"}
 
+# --- Startup 이벤트 ---
 @app.on_event("startup")
 def startup():
-    # 모델/인덱스/LLM 1회 로드
     app.state.encoder = SentenceTransformer(settings.model_name)
     app.state.index, app.state.documents = load_index(settings.faiss_dir)
     app.state.gemini = GeminiClient(api_key=settings.google_api_key)
 
-# 공통 
+# --- API Router 등록 ---
 app.include_router(qa_router, prefix="/api", tags=["qa"])
 app.include_router(onboarding_router, prefix="/api", tags=["onboarding"])
+app.include_router(artwork_router, prefix="/api", tags=["artwork"])
 
-# 도메인 라우터들 (각 라우터 내부에서 prefix를 이미 갖고 있으면 그대로 둡니다)
-app.include_router(exhibitions.router)
-app.include_router(galleries.router)
-app.include_router(artifacts.router)
-app.include_router(artworks.router)
+# --- 기타 서비스(전시, 미술관, 유물 등) 라우터 등록 ---
+app.include_router(exhibitions.router, prefix="/api", tags=["exhibitions"])
+app.include_router(galleries.router, prefix="/api", tags=["galleries"])
+app.include_router(artifacts.router, prefix="/api", tags=["artifacts"])
 

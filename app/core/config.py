@@ -4,6 +4,8 @@ class Settings(BaseSettings):
     google_api_key: str
     faiss_dir: str = "data/faiss"
     model_name: str = "all-MiniLM-L6-v2"
+    DATABASE_URL: str
+    openai_api_key: str  
 
     model_config = SettingsConfigDict(
         env_file=".env",
