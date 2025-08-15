@@ -12,6 +12,7 @@ from app.routers.qa import router as qa_router
 from app.routers.onboarding import router as onboarding_router
 from app.routers.artwork import router as artwork_router
 from app.routers import exhibitions, galleries, artifacts
+from app.routers.tts import router as tts_router
 
 app = FastAPI()
 
@@ -41,6 +42,7 @@ def startup():
 app.include_router(qa_router, prefix="/api", tags=["qa"])
 app.include_router(onboarding_router, prefix="/api", tags=["onboarding"])
 app.include_router(artwork_router, prefix="/api", tags=["artwork"])
+app.include_router(tts_router, prefix="/api", tags=["tts"])
 
 # --- 기타 서비스(전시, 미술관, 유물 등) 라우터 등록 ---
 app.include_router(exhibitions.router, prefix="/api", tags=["exhibitions"])
