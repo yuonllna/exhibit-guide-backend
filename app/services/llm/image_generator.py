@@ -6,7 +6,6 @@ load_dotenv()
 
 class ImageRegenService:
     def __init__(self, model_name: str = "gemini-2.0-flash-preview-image-generation"):
-        api_key = os.getenv("GOOGLE_API_KEY")
         self.client = Client()
         self.model_name = model_name
 

@@ -35,7 +35,7 @@ async def read_root():
 def startup():
     app.state.encoder = SentenceTransformer(settings.model_name)
     app.state.index, app.state.documents = load_index(settings.faiss_dir)
-    app.state.gemini = GeminiClient(api_key=settings.google_api_key)
+    app.state.gemini = GeminiClient()
 
 # --- API Router 등록 ---
 app.include_router(qa_router, prefix="/api", tags=["qa"])

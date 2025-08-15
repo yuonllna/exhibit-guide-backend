@@ -18,9 +18,8 @@ def get_index_docs(request: Request):
 def get_llm(request: Request) -> GeminiClient:
     return request.app.state.gemini
 
-@router.post("/artifacts/{artifact_id}/questions", response_model=Answer)
+@router.post("/artifacts/questions", response_model=Answer)
 async def ask_question_by_voice(
-    artifact_id: str,
     file: UploadFile = File(...),
     encoder: SentenceTransformer = Depends(get_encoder),
     idx_docs = Depends(get_index_docs),
@@ -61,6 +60,7 @@ async def ask_question_by_voice(
     if not filtered_docs:
         print("[📭 유사한 문서 없음] 컨텍스트 없이 LLM 호출")
         answer_text = llm.answer("", question_text)
+        print(answer_text)
         return Answer(
             question=question_text,
             gemini_answer=answer_text,
