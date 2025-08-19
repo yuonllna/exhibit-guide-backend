@@ -4,46 +4,37 @@ import os
 import io
 from app.services.llm.image_generator import ImageRegenService
 
-
 router = APIRouter()
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 service = ImageRegenService()
 
-UPLOAD_DIR = "uploads"
+UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+STATIC_ORIGINALS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "static", "originals")
 
 @router.post("/artworks/regenerate-image")
 async def regenerate_artwork_image(
-    prompt: str = Form(...),
-    image: UploadFile = File(...),         
-    size: str = Form("1024x1024")
+    prompt: str = Form(""),
+    original_filename: str = Form(...),  
+    user_image: UploadFile = File(...)
 ):
-    # 업로드 원본 이미지 저장
-    image_path = os.path.join(UPLOAD_DIR, image.filename)
-    with open(image_path, "wb") as f:
-        f.write(await image.read())
+    try:
+        user_image_path = os.path.join(UPLOAD_DIR, f"user_{user_image.filename}")
+        original_image_path = os.path.join(STATIC_ORIGINALS_DIR, original_filename)
 
-    result_bytes = service.regenerate_image(image_path, prompt)
+        if not os.path.exists(original_image_path):
+            raise HTTPException(status_code=400, detail=f"원본 이미지 '{original_filename}'이 존재하지 않습니다.")
 
-    if result_bytes:
-        
-        '''
-        GENERATED_DIR = "generated"
-        os.makedirs(GENERATED_DIR, exist_ok=True)
-        from datetime import datetime
-        save_name = (
-            f"{os.path.splitext(image.filename)[0]}_regen_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
-        )
-        save_path = os.path.join(GENERATED_DIR, save_name)
-        with open(save_path, "wb") as f:
-            f.write(result_bytes)
-        print(f"저장 경로: {save_path}")
-        '''
+        with open(user_image_path, "wb") as f:
+            f.write(await user_image.read())
 
-        return StreamingResponse(
-            io.BytesIO(result_bytes),
-            media_type="image/png"
-        )
-    else:
-        raise HTTPException(status_code=500, detail="이미지 재생성 실패")
+        result_bytes = service.regenerate_image(user_image_path, original_image_path, prompt)
+
+        if result_bytes:
+            return StreamingResponse(io.BytesIO(result_bytes), media_type="image/png")
+        else:
+            raise HTTPException(status_code=500, detail="이미지 재생성 실패")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"서버 오류: {e}")
