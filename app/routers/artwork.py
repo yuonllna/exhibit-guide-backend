@@ -11,7 +11,7 @@ service = ImageRegenService()
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-STATIC_ORIGINALS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "static", "originals")
+STATIC_ORIGINALS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "static", "references")
 
 @router.post("/artworks/regenerate-image")
 async def regenerate_artwork_image(
