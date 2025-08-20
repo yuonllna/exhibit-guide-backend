@@ -12,6 +12,7 @@ from app.routers.qa import router as qa_router
 from app.routers.onboarding import router as onboarding_router
 from app.routers.artwork import router as artwork_router
 from app.routers import exhibitions, galleries, artifacts
+from app.routers.faq import router as faq_router
 from app.routers.tts import router as tts_router
 from app.routers.damage_detector import router as damage_router
 
@@ -50,4 +51,5 @@ app.include_router(damage_router, prefix="/api", tags=["damage"])
 app.include_router(exhibitions.router, prefix="/api", tags=["exhibitions"])
 app.include_router(galleries.router, prefix="/api", tags=["galleries"])
 app.include_router(artifacts.router, prefix="/api", tags=["artifacts"])
+app.include_router(faq_router, prefix="/api", tags=["faqs"])
 

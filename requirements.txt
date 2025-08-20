@@ -37,3 +37,4 @@ lpips
 boto3
 aiofiles
 google-generativeai
+google-genai

@@ -1,5 +1,4 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from app.services.speech.stt import SpeechToTextService
 from app.utils.language import detect_language_by_charset 
 
 router = APIRouter()
