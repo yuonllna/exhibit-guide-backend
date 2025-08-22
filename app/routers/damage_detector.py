@@ -26,6 +26,10 @@ async def detect_damage(
             "damaged_area_percent": area_pct
         }
 
-    except Exception as e:
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception:
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="서버 내부 오류")
